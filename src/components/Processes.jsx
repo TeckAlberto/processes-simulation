@@ -9,16 +9,18 @@ export default function Processes() {
     count,
     setCount,
     getArrayFull,
-    intervalId
+    intervalId,
+    updateArray
   } = useSimulation();
 
-  const [arrayFull] = useState(getArrayFull());
+  const [arrayFull, setArrayFull] = useState(getArrayFull());
   const [arreglosTerminados, setArreglosTerminados] = useState([]);
   const [currentElementIndex, setCurrentElementIndex] = useState(0);
 
   const [processStates, setProcessStates] = useState(Array(arrayFull.length).fill("en ejecucion"));
 
   useEffect(() => {
+    console.log(arrayFull)
     const delay = (arrayFull[currentElementIndex]?.time * 1000) > 0 ? (arrayFull[currentElementIndex].time * 1000) : null
     if(delay === null) clearInterval(intervalId)
     if (currentElementIndex < arrayFull.length && delay) {
@@ -55,6 +57,7 @@ export default function Processes() {
             setCount((prev) => prev - 1);
           }
       }
+      
     }
   }, [arrayFull, currentElementIndex, processStates]);
 
@@ -81,9 +84,12 @@ export default function Processes() {
   };
 
   const handleInterruption = (index) => {
-    const updatedStates = [...processStates];
-    updatedStates[index] = "interrupcion";
-    setProcessStates(updatedStates);
+    // const updatedStates = [...processStates];
+    // updatedStates[index] = "interrupcion";
+    //setProcessStates(updatedStates);
+    const arrayProv = [...arrayFull]
+    const arrayFinal = updateArray(arrayProv ,index)
+    setArrayFull(arrayFinal)
 
   };
 

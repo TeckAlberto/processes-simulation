@@ -47,13 +47,17 @@ export function SimulationProvider({ children }) {
       return arrayCurrent.flat()
     }
 
-    const updateArray = (array, element) => {
-      for(let i = 0; i < array.length; ++i) {
-        if(element.lot_id !== array[i + 1].lot_id) {
-          array[i] = element
+    const updateArray = (array, index) => {
+      const element = array[index]
+      const newArray = [...array]
+      for(let i = index; i < newArray.length; ++i) {
+        if(element?.lot_id !== newArray[i + 1]?.lot_id) {
+          newArray[i] = element
+          break
         }
-        array[i] = array[i + 1]
+        newArray[i] = newArray[i + 1]
       }
+      return newArray
     }
 
   

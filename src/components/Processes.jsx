@@ -16,13 +16,13 @@ export default function Processes() {
   const [arreglosTerminados, setArreglosTerminados] = useState([]);
   const [currentElementIndex, setCurrentElementIndex] = useState(0);
 
-  const [processStates, setProcessStates] = useState(Array(arrayFull.length).fill("en ejecución"));
+  const [processStates, setProcessStates] = useState(Array(arrayFull.length).fill("en ejecucion"));
 
   useEffect(() => {
     const delay = (arrayFull[currentElementIndex]?.time * 1000) > 0 ? (arrayFull[currentElementIndex].time * 1000) : null
     if(delay === null) clearInterval(intervalId)
     if (currentElementIndex < arrayFull.length && delay) {
-      if (processStates[currentElementIndex] !== "pausado") { // Verifica el estado antes de ejecutar
+      if (processStates[currentElementIndex] === "en ejecucion") { // Verifica el estado antes de ejecutar
         const timer = setTimeout(() => {
           const elementToMove = arrayFull[currentElementIndex];
           const { val1, val2, operation } = elementToMove;
@@ -40,6 +40,21 @@ export default function Processes() {
         
         return () => clearTimeout(timer);
       }
+      if(processStates[currentElementIndex] === "error") {
+        const elementToMove = arrayFull[currentElementIndex];
+          const { val1, val2, operation } = elementToMove;
+          elementToMove.result = functions(operation, val1, val2);
+          elementToMove.error = "Error en ejecucion"
+          setArreglosTerminados((prevArreglosTerminados) => [
+            ...prevArreglosTerminados,
+            elementToMove,
+          ]);
+
+          setCurrentElementIndex((prevIndex) => prevIndex + 1);
+          if ((currentElementIndex + 1) % 3 === 0) {
+            setCount((prev) => prev - 1);
+          }
+      }
     }
   }, [arrayFull, currentElementIndex, processStates]);
 
@@ -53,7 +68,7 @@ export default function Processes() {
   // Función para continuar un proceso
   const handleContinue = (index) => {
     const updatedStates = [...processStates];
-    updatedStates[index] = "en ejecución";
+    updatedStates[index] = "en ejecucion";
     setProcessStates(updatedStates);
 
   };
@@ -114,12 +129,23 @@ export default function Processes() {
                     <span className="font-normal text-md">{element.val2}</span>
                   </p>
 
-                  <p className="font-bold text-center text-white text-md">
+                  {/* <p className="font-bold text-center text-white text-md">Tiempo final: <span className="font-normal text-md">{element.time}</span></p> */}
+
+                  {element?.error?.length > 0 ? (
+                    <p className="font-bold text-center text-white text-md">
+                    Resultado:{" "}
+                    <span className="font-normal text-red-600 text-md">
+                      {element.error}
+                    </span>
+                  </p>
+                  ) : (
+                    <p className="font-bold text-center text-white text-md">
                     Resultado:{" "}
                     <span className="font-normal text-md">
                       {element.result}
                     </span>
                   </p>
+                  )}
                 </div>
               ))}
             </div>

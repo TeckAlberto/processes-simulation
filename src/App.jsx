@@ -18,6 +18,7 @@ export default function App() {
       setLot([])
     }
     setProcess(true)
+    setCount((prev) => prev - 1)
     setIntervalId(startTimer())
   }
 

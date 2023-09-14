@@ -29,7 +29,7 @@ export const fillLots = countProcess => {
         process.operation = getRandomNum(0, 18);
       }
   
-      process.time = getRandomNum(7, 18);
+      process.time = getRandomNum(2, 4);
       lot.push(process); // Agregar el proceso al lote actual
     }
   

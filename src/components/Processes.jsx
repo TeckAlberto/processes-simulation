@@ -10,7 +10,9 @@ export default function Processes() {
     setCount,
     getArrayFull,
     intervalId,
-    updateArray
+    updateArray,
+    setIntervalId,
+    startTimer
   } = useSimulation();
 
   const [arrayFull, setArrayFull] = useState(getArrayFull());
@@ -20,7 +22,7 @@ export default function Processes() {
   const [processStates, setProcessStates] = useState(Array(arrayFull.length).fill("en ejecucion"));
 
   useEffect(() => {
-    console.log(arrayFull)
+    
     const delay = (arrayFull[currentElementIndex]?.time * 1000) > 0 ? (arrayFull[currentElementIndex].time * 1000) : null
     if(delay === null) clearInterval(intervalId)
     if (currentElementIndex < arrayFull.length && delay) {
@@ -35,7 +37,7 @@ export default function Processes() {
           ]);
 
           setCurrentElementIndex((prevIndex) => prevIndex + 1);
-          if ((currentElementIndex + 1) % 3 === 0) {
+          if ((currentElementIndex + 1) % 3 === 0 && count > 0) {
             setCount((prev) => prev - 1);
           }
         }, delay);
@@ -66,6 +68,7 @@ export default function Processes() {
     const updatedStates = [...processStates];
     updatedStates[index] = "pausado";
     setProcessStates(updatedStates);
+    clearInterval(intervalId)
   };
 
   // Función para continuar un proceso
@@ -73,7 +76,7 @@ export default function Processes() {
     const updatedStates = [...processStates];
     updatedStates[index] = "en ejecucion";
     setProcessStates(updatedStates);
-
+    setIntervalId(startTimer())
   };
   
   const handleError = (index) => {
@@ -161,6 +164,8 @@ export default function Processes() {
             <h2 className="text-3xl font-bold">Proceso en ejecucion</h2>
             {currentElementIndex < arrayFull.length ? (
               <div className="flex flex-col w-full p-3 space-y-3 rounded-lg shadow-lg bg-slate-100">
+                <p>Numero lote: {arrayFull[currentElementIndex].lot_id}</p>
+
                 <p>Numero del Proceso: {arrayFull[currentElementIndex]?.id}</p>
 
                 <p className="">
@@ -173,7 +178,7 @@ export default function Processes() {
 
                 <p>
                   Tiempo Estimado:{" "}
-                  <span>{arrayFull[currentElementIndex]?.time}</span>
+                  <span>{arrayFull[currentElementIndex]?.time} segundos</span>
                 </p>
 
                 {processStates[currentElementIndex] === "pausado" ? (
